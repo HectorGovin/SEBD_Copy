@@ -3,12 +3,14 @@ import java.sql.*;
 import java.awt.event.KeyEvent;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableColumn;
+import javax.swing.JOptionPane;
 
 public class MenuPrincipal extends javax.swing.JFrame {
     
     String[][] PRODUCTOS = new String[50][9];
     int contador;
     int i = 0;
+    String xd;
     
     public static final String URL = "jdbc:mysql://localhost:3306/sebd";
     public static final String USERNAME = "root";
@@ -17,7 +19,6 @@ public class MenuPrincipal extends javax.swing.JFrame {
     DefaultTableModel modelo;
     
     public MenuPrincipal() {
-        
         initComponents();
         this.setExtendedState(this.MAXIMIZED_BOTH);
         CargarTabla();
@@ -44,6 +45,7 @@ public class MenuPrincipal extends javax.swing.JFrame {
             c = tablaPRODUCTOS.getColumnModel().getColumn(cx);
             c.setMaxWidth(80); c.setMinWidth(80); c.setResizable(false); 
         }
+        ConsultaFolio();
     }
     
     public static Connection getConection(){
@@ -83,6 +85,29 @@ public class MenuPrincipal extends javax.swing.JFrame {
                 PRODUCTOS[i][7] = ("" + 1);
                 PR_DB(i);
             }
+    }
+    
+    public void ConsultaFolio(){
+        String id = "";
+        try{
+            Connection con = null;
+            con = getConection();
+            
+            PreparedStatement ps;
+            ResultSet res;            
+            
+            ps = con.prepareStatement("SELECT * FROM PRODUCTOS");
+            res = ps.executeQuery();
+            if(res.next()){
+                id=res.getString("ID_PROD");
+            }
+            
+            jLabel_Folio.setText(id);
+            System.out.println(id);
+            
+        } catch(Exception ex){
+            JOptionPane.showMessageDialog(null, "No se pudo mostrar la tabla, error: "+ex.toString());
+        }
     }
     
     private void PR_DB(int m){
